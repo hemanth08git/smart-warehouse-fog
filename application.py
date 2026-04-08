@@ -1,184 +1,4 @@
-# from flask import Flask, render_template, jsonify, request
-# from flask_cors import CORS
-# import requests
-# from datetime import datetime, timedelta
-# import json
-# from collections import defaultdict
-# import pandas as pd
-# import numpy as np
 
-# app = Flask(__name__)
-# CORS(app)
-
-# # API endpoint
-# API_URL = "https://83i550wn0g.execute-api.us-east-1.amazonaws.com/default/lambda-fetch-x25104683"
-
-# # Cache for data to reduce API calls
-# data_cache = []
-# cache_timestamp = None
-# CACHE_DURATION = 30  # seconds
-
-# def fetch_sensor_data(force_refresh=False):
-#     """Fetch sensor data from the API with caching"""
-#     global data_cache, cache_timestamp
-    
-#     current_time = datetime.now()
-    
-#     if not force_refresh and cache_timestamp and (current_time - cache_timestamp).seconds < CACHE_DURATION:
-#         return data_cache
-    
-#     try:
-#         response = requests.get(API_URL, timeout=10)
-#         response.raise_for_status()
-#         data = response.json()
-        
-#         # Sort data by timestamp
-#         data.sort(key=lambda x: x['timestamp'])
-        
-#         # Convert timestamp strings to datetime objects for filtering
-#         for record in data:
-#             record['datetime'] = datetime.fromisoformat(record['timestamp'].replace('Z', '+00:00'))
-        
-#         data_cache = data
-#         cache_timestamp = current_time
-#         return data
-#     except requests.exceptions.RequestException as e:
-#         print(f"Error fetching data: {e}")
-#         return data_cache if data_cache else []
-
-# def filter_data_by_date(data, start_date, end_date):
-#     """Filter data by date range"""
-#     if not start_date and not end_date:
-#         return data
-    
-#     filtered = []
-#     start = datetime.fromisoformat(start_date) if start_date else None
-#     end = datetime.fromisoformat(end_date) if end_date else None
-    
-#     for record in data:
-#         record_date = record['datetime']
-#         if start and record_date < start:
-#             continue
-#         if end and record_date > end:
-#             continue
-#         filtered.append(record)
-    
-#     return filtered
-
-# def calculate_statistics(data):
-#     """Calculate comprehensive statistics"""
-#     if not data:
-#         return {}
-    
-#     df = pd.DataFrame(data)
-    
-#     stats = {
-#         'current': {
-#             'temperature': float(df['temperature'].iloc[-1]),
-#             'humidity': float(df['humidity'].iloc[-1]),
-#             'gas_level': float(df['gas_level'].iloc[-1]),
-#             'light_level': int(df['light_level'].iloc[-1]),
-#             'vibration': float(df['vibration'].iloc[-1]),
-#             'motion_detected': int(df['motion_detected'].iloc[-1]),
-#             'alert_flag': int(df['alert_flag'].iloc[-1]),
-#             'alerts': df['alerts'].iloc[-1]
-#         },
-#         'statistics': {
-#             'temperature': {
-#                 'avg': float(df['temperature'].mean()),
-#                 'min': float(df['temperature'].min()),
-#                 'max': float(df['temperature'].max()),
-#                 'std': float(df['temperature'].std())
-#             },
-#             'humidity': {
-#                 'avg': float(df['humidity'].mean()),
-#                 'min': float(df['humidity'].min()),
-#                 'max': float(df['humidity'].max()),
-#                 'std': float(df['humidity'].std())
-#             },
-#             'gas_level': {
-#                 'avg': float(df['gas_level'].mean()),
-#                 'min': float(df['gas_level'].min()),
-#                 'max': float(df['gas_level'].max()),
-#                 'std': float(df['gas_level'].std())
-#             },
-#             'vibration': {
-#                 'avg': float(df['vibration'].mean()),
-#                 'min': float(df['vibration'].min()),
-#                 'max': float(df['vibration'].max()),
-#                 'std': float(df['vibration'].std())
-#             }
-#         },
-#         'alerts_summary': {
-#             'total_alerts': int(df['alert_flag'].sum()),
-#             'alert_rate': float(df['alert_flag'].mean() * 100),
-#             'motion_events': int(df['motion_detected'].sum()),
-#             'motion_rate': float(df['motion_detected'].mean() * 100)
-#         },
-#         'total_readings': len(data)
-#     }
-    
-#     return stats
-
-# @app.route('/')
-# def dashboard():
-#     """Render the dashboard"""
-#     return render_template('dashboard.html')
-
-# @app.route('/api/data')
-# def get_data():
-#     """API endpoint to get filtered sensor data"""
-#     start_date = request.args.get('start_date')
-#     end_date = request.args.get('end_date')
-    
-#     data = fetch_sensor_data()
-#     filtered_data = filter_data_by_date(data, start_date, end_date)
-    
-#     # Convert datetime objects back to strings for JSON
-#     for record in filtered_data:
-#         record['timestamp'] = record['timestamp']
-#         if 'datetime' in record:
-#             del record['datetime']
-    
-#     return jsonify(filtered_data)
-
-# @app.route('/api/stats')
-# def get_stats():
-#     """API endpoint to get statistics"""
-#     start_date = request.args.get('start_date')
-#     end_date = request.args.get('end_date')
-    
-#     data = fetch_sensor_data()
-#     filtered_data = filter_data_by_date(data, start_date, end_date)
-#     stats = calculate_statistics(filtered_data)
-    
-#     return jsonify(stats)
-
-# @app.route('/api/alerts')
-# def get_alerts():
-#     """API endpoint to get alerts only"""
-#     start_date = request.args.get('start_date')
-#     end_date = request.args.get('end_date')
-    
-#     data = fetch_sensor_data()
-#     filtered_data = filter_data_by_date(data, start_date, end_date)
-#     alerts = [d for d in filtered_data if d['alert_flag'] == 1]
-    
-#     return jsonify(alerts)
-
-# @app.route('/api/latest')
-# def get_latest():
-#     """API endpoint to get latest reading"""
-#     data = fetch_sensor_data()
-#     if data:
-#         latest = data[-1].copy()
-#         if 'datetime' in latest:
-#             del latest['datetime']
-#         return jsonify(latest)
-#     return jsonify({})
-
-# if __name__ == '__main__':
-#     app.run(debug=True, host='0.0.0.0', port=5000)
 
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
@@ -191,9 +11,7 @@ from collections import defaultdict
 import threading
 import time
 
-application = Flask(__name__)
-app = application
-
+app = Flask(__name__)
 CORS(app)
 
 # Configure logging
@@ -204,7 +22,7 @@ logger = logging.getLogger(__name__)
 API_URL = "https://83i550wn0g.execute-api.us-east-1.amazonaws.com/default/lambda-fetch-x25104683"
 
 # SNS Configuration
-SNS_TOPIC_ARN = "arn:aws:sns:us-east-1:891377173915:sns-fog-x25104683"  # Replace with your ARN
+SNS_TOPIC_ARN = "arn:aws:sns:us-east-1:YOUR_ACCOUNT_ID:warehouse-alerts"  # Replace with your ARN
 sns_client = boto3.client('sns', region_name='us-east-1')
 
 # Track sent alerts to avoid duplicates
@@ -232,13 +50,13 @@ def send_sns_alert(alert_data):
         alert_severity = "CRITICAL" if len(alerts_list) >= 2 else "WARNING"
         
         # Build email subject
-        subject = f" WAREHOUSE ALERT - {alert_severity} - {alert_data.get('warehouse_id')}"
+        subject = f"🚨 WAREHOUSE ALERT - {alert_severity} - {alert_data.get('warehouse_id')}"
         
         # Build email message
         message = f"""
- WAREHOUSE MONITORING ALERT - {alert_severity}
+WAREHOUSE MONITORING ALERT - {alert_severity}
 
- Alert Details:
+Alert Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 • Warehouse ID: {alert_data.get('warehouse_id', 'Unknown')}
 • Timestamp: {alert_data.get('timestamp', 'Unknown')}
@@ -253,11 +71,11 @@ Current Readings:
 • Vibration: {alert_data.get('vibration', 'N/A')} mm/s
 • Motion Detected: {'Yes' if alert_data.get('motion_detected') else 'No'}
 
- Alerts Triggered:
+Alerts Triggered:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 {chr(10).join(f'• {alert}' for alert in alerts_list)}
 
- Recommended Actions:
+Recommended Actions:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
         
@@ -279,7 +97,7 @@ Current Readings:
         
         message += f"""
 
- Action Required:
+Action Required:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Please investigate this alert immediately.
 
@@ -317,12 +135,18 @@ This is an automated alert from your Warehouse Monitoring System.
         if len(sent_alerts) > 1000:
             sent_alerts.clear()
         
-        logger.info(f" SNS alert sent: {response['MessageId']}")
+        logger.info(f"SNS alert sent: {response['MessageId']}")
         return True
         
     except Exception as e:
         logger.error(f"Failed to send SNS alert: {str(e)}")
         return False
+
+
+
+
+
+
 
 def fetch_sensor_data(force_refresh=False):
     """Fetch sensor data from the API with caching"""
@@ -371,19 +195,60 @@ def filter_data_by_date(data, start_date, end_date):
     
     return filtered
 
-def check_and_send_alerts(data):
-    """Check for new alerts and send SNS notifications"""
+def calculate_statistics(data):
+    """Calculate comprehensive statistics"""
     if not data:
-        return
+        return {}
     
-    # Get the latest record
-    latest = data[-1] if data else None
+    df = pd.DataFrame(data)
     
-    if latest and latest.get('alert_flag') == 1:
-        # Check if this alert is new (not sent before)
-        alert_key = f"{latest.get('timestamp')}_{latest.get('warehouse_id')}"
-        if alert_key not in sent_alerts:
-            send_sns_alert(latest)
+    stats = {
+        'current': {
+            'temperature': float(df['temperature'].iloc[-1]),
+            'humidity': float(df['humidity'].iloc[-1]),
+            'gas_level': float(df['gas_level'].iloc[-1]),
+            'light_level': int(df['light_level'].iloc[-1]),
+            'vibration': float(df['vibration'].iloc[-1]),
+            'motion_detected': int(df['motion_detected'].iloc[-1]),
+            'alert_flag': int(df['alert_flag'].iloc[-1]),
+            'alerts': df['alerts'].iloc[-1]
+        },
+        'statistics': {
+            'temperature': {
+                'avg': float(df['temperature'].mean()),
+                'min': float(df['temperature'].min()),
+                'max': float(df['temperature'].max()),
+                'std': float(df['temperature'].std())
+            },
+            'humidity': {
+                'avg': float(df['humidity'].mean()),
+                'min': float(df['humidity'].min()),
+                'max': float(df['humidity'].max()),
+                'std': float(df['humidity'].std())
+            },
+            'gas_level': {
+                'avg': float(df['gas_level'].mean()),
+                'min': float(df['gas_level'].min()),
+                'max': float(df['gas_level'].max()),
+                'std': float(df['gas_level'].std())
+            },
+            'vibration': {
+                'avg': float(df['vibration'].mean()),
+                'min': float(df['vibration'].min()),
+                'max': float(df['vibration'].max()),
+                'std': float(df['vibration'].std())
+            }
+        },
+        'alerts_summary': {
+            'total_alerts': int(df['alert_flag'].sum()),
+            'alert_rate': float(df['alert_flag'].mean() * 100),
+            'motion_events': int(df['motion_detected'].sum()),
+            'motion_rate': float(df['motion_detected'].mean() * 100)
+        },
+        'total_readings': len(data)
+    }
+    
+    return stats
 
 @app.route('/')
 def dashboard():
@@ -399,10 +264,6 @@ def get_data():
     data = fetch_sensor_data()
     filtered_data = filter_data_by_date(data, start_date, end_date)
     
-    # Check for alerts and send SNS if needed
-    if filtered_data:
-        check_and_send_alerts(filtered_data)
-    
     # Convert datetime objects back to strings for JSON
     for record in filtered_data:
         record['timestamp'] = record['timestamp']
@@ -410,6 +271,21 @@ def get_data():
             del record['datetime']
     
     return jsonify(filtered_data)
+
+@app.route('/api/stats')
+def get_stats():
+    """API endpoint to get statistics"""
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    
+    data = fetch_sensor_data()
+    filtered_data = filter_data_by_date(data, start_date, end_date)
+    stats = calculate_statistics(filtered_data)
+    
+    return jsonify(stats)
+
+
+
 
 @app.route('/api/alerts')
 def get_alerts():
@@ -430,6 +306,7 @@ def get_alerts():
             send_sns_alert(latest_alert)
     
     return jsonify(alerts)
+
 
 @app.route('/api/send-test-alert')
 def send_test_alert():
@@ -454,13 +331,23 @@ def send_test_alert():
     else:
         return jsonify({'error': 'Failed to send test alert'}), 500
 
-@app.route('/api/alert-history')
-def get_alert_history():
-    """Get history of sent alerts"""
-    return jsonify({
-        'sent_alerts_count': len(sent_alerts),
-        'recent_alerts': list(sent_alerts)[-20:]  # Last 20 alerts
-    })
+
+
+
+@app.route('/api/latest')
+def get_latest():
+    """API endpoint to get latest reading"""
+    data = fetch_sensor_data()
+    if data:
+        latest = data[-1].copy()
+        if 'datetime' in latest:
+            del latest['datetime']
+        return jsonify(latest)
+    return jsonify({})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
+
+
+#---------------------------------------------------------------
