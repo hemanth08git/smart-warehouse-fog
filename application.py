@@ -11,7 +11,8 @@ from collections import defaultdict
 import threading
 import time
 
-app = Flask(__name__)
+application = Flask(__name__)
+app = application
 CORS(app)
 
 # Configure logging
