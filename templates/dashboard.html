@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Intelligence Dashboard | IoT Sensor Monitoring</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-warehouse"></i>
+                Warehouse Intelligence Platform
+            </a>
+            <div class="ms-auto">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span id="connectionStatus">Live</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h1 class="page-title">
+                            <i class="fas fa-chart-line"></i>
+                            Sensor Monitoring Dashboard
+                        </h1>
+                        <p class="page-subtitle">Real-time warehouse environmental monitoring and analytics</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="date-filter-card">
+                            <div class="filter-group">
+                                <label><i class="far fa-calendar-alt"></i> Start Date</label>
+                                <input type="datetime-local" id="startDate" class="form-control">
+                            </div>
+                            <div class="filter-group">
+                                <label><i class="far fa-calendar-alt"></i> End Date</label>
+                                <input type="datetime-local" id="endDate" class="form-control">
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-primary" onclick="applyDateFilter()">
+                                    <i class="fas fa-filter"></i> Apply Filter
+                                </button>
+                                <button class="btn btn-secondary" onclick="resetDateFilter()">
+                                    <i class="fas fa-undo-alt"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-section">
+            <div class="container-fluid">
+                <div class="row g-4">
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="kpi-card">
+                            <div class="kpi-icon temperature">
+                                <i class="fas fa-thermometer-half"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3 id="currentTemp">--°C</h3>
+                                <p>Temperature</p>
+                                <small class="trend" id="tempTrend">Loading...</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="kpi-card">
+                            <div class="kpi-icon humidity">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3 id="currentHumidity">--%</h3>
+                                <p>Humidity</p>
+                                <small class="trend" id="humidityTrend">Loading...</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="kpi-card">
+                            <div class="kpi-icon gas">
+                                <i class="fas fa-gas-pump"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3 id="currentGas">-- ppm</h3>
+                                <p>Gas Level</p>
+                                <small class="trend" id="gasTrend">Loading...</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-6">
+                        <div class="kpi-card">
+                            <div class="kpi-icon vibration">
+                                <i class="fas fa-vibrate"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <h3 id="currentVibration">-- mm/s</h3>
+                                <p>Vibration</p>
+                                <small class="trend" id="vibrationTrend">Loading...</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="container-fluid">
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <i class="fas fa-chart-line"></i>
+                                    <h5>Environmental Metrics Overview</h5>
+                                </div>
+                                <div class="chart-controls">
+                                    <button class="btn-icon" onclick="toggleDataset('temperature')">
+                                        <i class="fas fa-thermometer-half"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="toggleDataset('humidity')">
+                                        <i class="fas fa-tint"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="toggleDataset('gas')">
+                                        <i class="fas fa-gas-pump"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="toggleDataset('vibration')">
+                                        <i class="fas fa-vibrate"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="mainChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="stats-card">
+                            <div class="stats-header">
+                                <i class="fas fa-chart-pie"></i>
+                                <h5>Statistics Summary</h5>
+                            </div>
+                            <div class="stats-body" id="statisticsContent">
+                                <div class="loading">Loading statistics...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mt-2">
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <h5>Light Level & Motion Detection</h5>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="lightMotionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <h5>Alert Distribution</h5>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="alertChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Data Table Section -->
+        <div class="table-section">
+            <div class="container-fluid">
+                <div class="table-header">
+                    <div class="table-title">
+                        <i class="fas fa-table"></i>
+                        <h5>Sensor Data History</h5>
+                    </div>
+                    <div class="table-controls">
+                        <input type="text" id="tableSearch" placeholder="Search..." class="search-input">
+                        <button class="btn-icon" onclick="exportData()">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="btn-icon" onclick="refreshData()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Temperature</th>
+                                <th>Humidity</th>
+                                <th>Gas Level</th>
+                                <th>Light Level</th>
+                                <th>Vibration</th>
+                                <th>Motion</th>
+                                <th>Status</th>
+                                <th>Alerts</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr><td colspan="9" class="text-center">Loading data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Alerts Section -->
+        <div class="alerts-section">
+            <div class="container-fluid">
+                <div class="alerts-header">
+                    <i class="fas fa-bell"></i>
+                    <h5>Recent Alerts & Events</h5>
+                    <span class="alerts-count" id="alertsCount">0</span>
+                </div>
+                <div class="alerts-list" id="alertsList">
+                    <div class="loading">Loading alerts...</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
