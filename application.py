@@ -201,7 +201,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # API endpoint
-API_URL = "https://mhzfmbpz75.execute-api.us-east-1.amazonaws.com/default/lambda-store-x25104683"
+API_URL = "https://83i550wn0g.execute-api.us-east-1.amazonaws.com/default/lambda-fetch-x25104683"
 
 # SNS Configuration
 SNS_TOPIC_ARN = "arn:aws:sns:us-east-1:891377173915:sns-fog-x25104683"  # Replace with your ARN
