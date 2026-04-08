@@ -232,19 +232,19 @@ def send_sns_alert(alert_data):
         alert_severity = "CRITICAL" if len(alerts_list) >= 2 else "WARNING"
         
         # Build email subject
-        subject = f"🚨 WAREHOUSE ALERT - {alert_severity} - {alert_data.get('warehouse_id')}"
+        subject = f" WAREHOUSE ALERT - {alert_severity} - {alert_data.get('warehouse_id')}"
         
         # Build email message
         message = f"""
-🚨 WAREHOUSE MONITORING ALERT - {alert_severity}
+ WAREHOUSE MONITORING ALERT - {alert_severity}
 
-📊 Alert Details:
+ Alert Details:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 • Warehouse ID: {alert_data.get('warehouse_id', 'Unknown')}
 • Timestamp: {alert_data.get('timestamp', 'Unknown')}
 • Severity: {alert_severity}
 
-📈 Current Readings:
+Current Readings:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 • Temperature: {alert_data.get('temperature', 'N/A')}°C
 • Humidity: {alert_data.get('humidity', 'N/A')}%
@@ -253,11 +253,11 @@ def send_sns_alert(alert_data):
 • Vibration: {alert_data.get('vibration', 'N/A')} mm/s
 • Motion Detected: {'Yes' if alert_data.get('motion_detected') else 'No'}
 
-⚠️ Alerts Triggered:
+ Alerts Triggered:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 {chr(10).join(f'• {alert}' for alert in alerts_list)}
 
-📋 Recommended Actions:
+ Recommended Actions:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
         
@@ -279,7 +279,7 @@ def send_sns_alert(alert_data):
         
         message += f"""
 
-🔧 Action Required:
+ Action Required:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Please investigate this alert immediately.
 
@@ -317,11 +317,11 @@ This is an automated alert from your Warehouse Monitoring System.
         if len(sent_alerts) > 1000:
             sent_alerts.clear()
         
-        logger.info(f"✅ SNS alert sent: {response['MessageId']}")
+        logger.info(f" SNS alert sent: {response['MessageId']}")
         return True
         
     except Exception as e:
-        logger.error(f"❌ Failed to send SNS alert: {str(e)}")
+        logger.error(f"Failed to send SNS alert: {str(e)}")
         return False
 
 def fetch_sensor_data(force_refresh=False):
